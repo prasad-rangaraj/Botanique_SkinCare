@@ -1,7 +1,7 @@
 import { Router, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
-import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
+import { authenticate, requireAdmin, requireStaffOrAdmin, AuthRequest } from '../middleware/auth';
 import { body, query, validationResult } from 'express-validator';
 
 export const productRouter = Router();
@@ -136,7 +136,7 @@ productRouter.get('/:slug', async (req: AuthRequest, res: Response, next: NextFu
 });
 
 // Admin: Get all products
-productRouter.get('/admin/all', authenticate, requireAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
+productRouter.get('/admin/all', authenticate, requireStaffOrAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const products = await prisma.product.findMany({
       include: {

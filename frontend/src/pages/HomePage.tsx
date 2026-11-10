@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   AlertCircle,
   HelpCircle,
+  Send,
 } from 'lucide-react'
 import api from '../lib/api'
 import { Product, Category } from '../types'
@@ -534,6 +535,19 @@ const HomePage: React.FC = () => {
           <p className="text-[11px] text-charcoal/50 mt-4">
             We respect your privacy. You can unsubscribe at any time.
           </p>
+
+          <div className="mt-8 pt-6 border-t border-beige/80 flex flex-wrap items-center justify-center gap-2 text-xs text-charcoal/70">
+            <span>Need real-time assistance with your ritual?</span>
+            <a
+              href="https://t.me/Skin_Carenow_Bot"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-medium text-sky-700 hover:text-sky-800 hover:underline"
+            >
+              <Send size={13} className="-rotate-45" />
+              <span>Chat with @Skin_Carenow_Bot on Telegram</span>
+            </a>
+          </div>
         </div>
       </section>
     </div>

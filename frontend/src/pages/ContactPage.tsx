@@ -11,6 +11,7 @@ import {
   HelpCircle,
   MessageSquare,
   ShieldCheck,
+  ExternalLink,
 } from 'lucide-react'
 import api from '../lib/api'
 
@@ -83,12 +84,53 @@ const ContactPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Telegram Customer Care Bot Card */}
+            <div className="bg-white p-6 rounded-2xl border border-sky-200/90 bg-gradient-to-br from-white to-sky-50/50 shadow-sm space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0">
+                  <Send size={15} className="-rotate-45 ml-0.5" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-sm font-semibold text-charcoal">
+                    Telegram Customer Bot
+                  </h3>
+                  <span className="text-[10px] text-sky-700 font-medium">Instant Messaging 24/7</span>
+                </div>
+              </div>
+              <p className="text-xs text-charcoal/70 leading-relaxed font-light">
+                Message our automated customer care assistant on Telegram for immediate answers about formulations, order inquiries, and skincare guidance.
+              </p>
+              <a
+                href="https://t.me/Skin_Carenow_Bot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-sky-600 hover:bg-sky-700 text-white transition-all shadow-xs"
+              >
+                <span>@Skin_Carenow_Bot</span>
+                <ExternalLink size={12} />
+              </a>
+            </div>
+
             {/* Support channels */}
             <div className="bg-white p-6 rounded-2xl border border-beige shadow-sm space-y-4">
               <h2 className="font-serif text-lg font-medium text-charcoal">
                 Support Channels
               </h2>
               <div className="space-y-3 text-xs text-charcoal/70">
+                <div className="flex items-start gap-3">
+                  <Send size={16} className="text-sky-600 shrink-0 mt-0.5 -rotate-45" />
+                  <span>
+                    <strong>Telegram Care Bot:</strong> Instant mobile support via{' '}
+                    <a
+                      href="https://t.me/Skin_Carenow_Bot"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-700 font-semibold hover:underline"
+                    >
+                      @Skin_Carenow_Bot
+                    </a>
+                  </span>
+                </div>
                 <div className="flex items-start gap-3">
                   <MessageSquare size={16} className="text-forest shrink-0 mt-0.5" />
                   <span>

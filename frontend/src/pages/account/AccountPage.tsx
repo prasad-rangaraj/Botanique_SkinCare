@@ -18,7 +18,7 @@ import { useAuthStore } from '../../store/authStore'
 import { Address } from '../../types'
 
 const AccountPage: React.FC = () => {
-  const { user, logout, isAdmin } = useAuthStore()
+  const { user, logout, isAdmin, isStaff, isStaffOrAdmin } = useAuthStore()
   const queryClient = useQueryClient()
 
   const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -109,8 +109,20 @@ const AccountPage: React.FC = () => {
         {/* Welcome Banner */}
         <div className="bg-white p-8 rounded-3xl border border-beige shadow-sm mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
-            <span className="badge bg-forest/10 text-forest text-xs mb-2">
-              Botanique Customer
+            <span
+              className={`badge text-xs mb-2 ${
+                isAdmin
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                  : isStaff
+                  ? 'bg-blue-100 text-blue-900 border border-blue-300'
+                  : 'bg-forest/10 text-forest'
+              }`}
+            >
+              {isAdmin
+                ? 'Botanique Founder & Owner (Admin)'
+                : isStaff
+                ? 'Customer Care & Operations (Staff)'
+                : 'Botanique Customer'}
             </span>
             <h1 className="font-serif text-2xl sm:text-3xl font-medium text-charcoal">
               Welcome, {user?.firstName} {user?.lastName}
@@ -119,10 +131,17 @@ const AccountPage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {isAdmin && (
-              <Link to="/admin" className="btn-secondary text-xs py-2 px-4">
+            {isStaffOrAdmin && (
+              <Link
+                to="/admin"
+                className={`btn-secondary text-xs py-2 px-4 flex items-center gap-1.5 ${
+                  isAdmin
+                    ? 'border-amber-400 text-amber-900 hover:bg-amber-50'
+                    : 'border-blue-400 text-blue-900 hover:bg-blue-50'
+                }`}
+              >
                 <Shield size={14} />
-                <span>Admin Dashboard</span>
+                <span>{isAdmin ? 'Admin Dashboard' : 'Staff Operations Portal'}</span>
               </Link>
             )}
             <Link to="/account/orders" className="btn-primary text-xs py-2.5 px-5">

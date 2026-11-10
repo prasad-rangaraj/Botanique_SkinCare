@@ -1,13 +1,13 @@
 import { Router, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
-import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
+import { authenticate, requireAdmin, requireStaffOrAdmin, AuthRequest } from '../middleware/auth';
 import bcrypt from 'bcryptjs';
 
 export const adminRouter = Router();
 
-// Apply auth + admin to all routes
-adminRouter.use(authenticate, requireAdmin);
+// Allow STAFF, ADMIN, and SUPER_ADMIN to access admin workspace
+adminRouter.use(authenticate, requireStaffOrAdmin);
 
 // Dashboard stats
 adminRouter.get('/dashboard', async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -134,7 +134,7 @@ adminRouter.get('/settings', async (req: AuthRequest, res: Response, next: NextF
   }
 });
 
-adminRouter.put('/settings', async (req: AuthRequest, res: Response, next: NextFunction) => {
+adminRouter.put('/settings', requireAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const updates = req.body as Record<string, string>;
     for (const [key, value] of Object.entries(updates)) {
@@ -253,7 +253,7 @@ adminRouter.patch('/requests/replacement/:id', async (req: AuthRequest, res: Res
 });
 
 // Audit logs
-adminRouter.get('/audit-logs', async (req: AuthRequest, res: Response, next: NextFunction) => {
+adminRouter.get('/audit-logs', requireAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const logs = await prisma.auditLog.findMany({
       include: { user: { select: { firstName: true, lastName: true, email: true } } },

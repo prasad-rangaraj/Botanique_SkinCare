@@ -15,10 +15,13 @@ import {
   Sliders,
   Settings,
   ChevronRight,
+  CheckCircle2,
 } from 'lucide-react'
 import api from '../../lib/api'
+import { useAuthStore } from '../../store/authStore'
 
 const AdminDashboard: React.FC = () => {
+  const { user, isAdmin, isStaff } = useAuthStore()
   const { data, isLoading, error } = useQuery<{
     stats: {
       totalOrders: number
@@ -46,56 +49,34 @@ const AdminDashboard: React.FC = () => {
     <div className="bg-cream min-h-screen py-8 md:py-12">
       <div className="page-container max-w-7xl">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-beige">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-forest text-cream text-[11px] mb-2 font-medium">
-              <Shield size={12} />
-              <span>Botanique Administrative Portal</span>
-            </div>
-            <h1 className="font-serif text-3xl font-medium text-charcoal">
-              Store Overview
+            <h1 className="font-serif text-2xl sm:text-3xl font-medium text-charcoal">
+              {isAdmin ? 'Store Executive Overview' : 'Operations & Fulfillment Desk'}
             </h1>
             <p className="text-xs text-charcoal/60 mt-1">
-              Operations, order fulfillment, and catalog management for Botanique.
+              Welcome back, <strong>{user?.firstName} {user?.lastName}</strong>. Real-time metrics and order fulfillment status.
             </p>
           </div>
 
-          {/* Quick Admin Nav Pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              to="/admin/products"
-              className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5"
-            >
-              <ShoppingBag size={14} />
-              <span>Products</span>
-            </Link>
+          <div className="flex items-center gap-3">
+            {stats?.pendingOrders ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                <Clock size={13} className="text-amber-600" />
+                <span>{stats.pendingOrders} Orders Pending Fulfillment</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <CheckCircle2 size={13} className="text-emerald-600" />
+                <span>All Orders Dispatched</span>
+              </span>
+            )}
             <Link
               to="/admin/orders"
-              className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5"
+              className="btn-primary text-xs py-2 px-4 inline-flex items-center gap-1.5 shadow-xs"
             >
               <Package size={14} />
-              <span>Orders</span>
-            </Link>
-            <Link
-              to="/admin/customers"
-              className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5"
-            >
-              <Users size={14} />
-              <span>Customers</span>
-            </Link>
-            <Link
-              to="/admin/requests"
-              className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5"
-            >
-              <RotateCcw size={14} />
-              <span>Returns ({stats?.pendingReturns || 0})</span>
-            </Link>
-            <Link
-              to="/admin/settings"
-              className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5"
-            >
-              <Settings size={14} />
-              <span>Settings</span>
+              <span>Process Orders</span>
             </Link>
           </div>
         </div>

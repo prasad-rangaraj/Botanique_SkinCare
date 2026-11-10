@@ -1,10 +1,11 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Navbar from './components/layout/Navbar'
+import AdminNavbar from './components/layout/AdminNavbar'
 import Footer from './components/layout/Footer'
 import AnnouncementBar from './components/layout/AnnouncementBar'
 import CartDrawer from './components/cart/CartDrawer'
-import ChatbotWidget from './components/chatbot/ChatbotWidget'
+import { AuterynChat } from '@auteryn/chat-widget/react'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import AdminRoute from './components/auth/AdminRoute'
 import HomePage from './pages/HomePage'
@@ -31,8 +32,8 @@ import { useAuthStore } from './store/authStore'
 
 function App() {
   const location = useLocation()
-  const { fetchCart } = useCartStore()
-  const { isAuthenticated } = useAuthStore()
+  const { items, fetchCart } = useCartStore()
+  const { user, isAuthenticated } = useAuthStore()
   const isAdminRoute = location.pathname.startsWith('/admin')
 
   useEffect(() => {
@@ -41,9 +42,15 @@ function App() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {!isAdminRoute && <AnnouncementBar />}
-      {!isAdminRoute && <Navbar />}
-      {!isAdminRoute && <CartDrawer />}
+      {isAdminRoute ? (
+        <AdminNavbar />
+      ) : (
+        <>
+          <AnnouncementBar />
+          <Navbar />
+          <CartDrawer />
+        </>
+      )}
 
       <Routes>
         {/* Public routes */}
@@ -73,7 +80,22 @@ function App() {
       </Routes>
 
       {!isAdminRoute && <Footer />}
-      {!isAdminRoute && <ChatbotWidget />}
+      {!isAdminRoute && (
+        <AuterynChat
+          site={import.meta.env.VITE_AUTERYN_SITE_ID || 'site_pub_Hg4Wp21ZVUvplnoYW8FC7cyn'}
+          theme={{
+            brand: '#254B3B',
+            corners: 'soft',
+          }}
+          context={{
+            store: 'BOTANIQUE',
+            customerName: user ? `${user.firstName} ${user.lastName}` : 'Visitor',
+            customerEmail: user?.email || '',
+            customerRole: user?.role || 'GUEST',
+            cartItemsCount: items?.length || 0,
+          }}
+        />
+      )}
     </div>
   )
 }

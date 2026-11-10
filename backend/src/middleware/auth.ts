@@ -59,6 +59,31 @@ export const requireAdmin = (
   next();
 };
 
+export const requireStaffOrAdmin = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (
+    !req.user ||
+    (req.user.role !== 'STAFF' &&
+      req.user.role !== 'ADMIN' &&
+      req.user.role !== 'SUPER_ADMIN')
+  ) {
+    return next(new AppError('Staff or Admin access required', 403));
+  }
+  next();
+};
+
+export const requireRole = (...roles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return next(new AppError(`Access forbidden. Required role(s): ${roles.join(', ')}`, 403));
+    }
+    next();
+  };
+};
+
 export const optionalAuth = async (
   req: AuthRequest,
   res: Response,

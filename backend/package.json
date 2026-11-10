@@ -4,12 +4,12 @@
   "description": "BOTANIQUE Botanical Skincare E-Commerce Backend API",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "node dev.js",
     "build": "tsc",
     "start": "node dist/server.js",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
-    "db:seed": "ts-node src/prisma/seed.ts",
+    "db:seed": "tsc && node dist/prisma/seed.js",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset"
   },
@@ -21,7 +21,7 @@
   "author": "BOTANIQUE",
   "license": "UNLICENSED",
   "prisma": {
-    "seed": "ts-node src/prisma/seed.ts"
+    "seed": "node dist/prisma/seed.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",

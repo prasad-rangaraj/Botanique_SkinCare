@@ -1,5 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Ensure .env is loaded wherever prisma is imported
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(process.cwd(), 'backend/.env') });
+dotenv.config();
 
 declare global {
   // eslint-disable-next-line no-var

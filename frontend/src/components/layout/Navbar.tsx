@@ -32,7 +32,7 @@ const Navbar: React.FC = () => {
 
   const userMenuRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const { isAuthenticated, isAdmin, user, logout } = useAuthStore()
+  const { isAuthenticated, isAdmin, isStaff, isStaffOrAdmin, user, logout } = useAuthStore()
   const { itemCount, openCart, fetchCart } = useCartStore()
 
   useEffect(() => {
@@ -143,7 +143,22 @@ const Navbar: React.FC = () => {
                   {isAuthenticated ? (
                     <>
                       <div className="px-4 py-3 border-b border-beige">
-                        <p className="text-xs text-sage font-medium">Signed in as</p>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-[10px] text-sage font-medium uppercase tracking-wider">
+                            Signed in as
+                          </p>
+                          <span
+                            className={`badge text-[9px] px-1.5 py-0.2 ${
+                              isAdmin
+                                ? 'bg-amber-100 text-amber-800'
+                                : isStaff
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-green-100 text-green-800'
+                            }`}
+                          >
+                            {user?.role}
+                          </span>
+                        </div>
                         <p className="text-sm font-medium text-charcoal truncate">
                           {user?.firstName} {user?.lastName}
                         </p>
@@ -164,14 +179,14 @@ const Navbar: React.FC = () => {
                         <Package size={15} />
                         My Orders
                       </Link>
-                      {isAdmin && (
+                      {isStaffOrAdmin && (
                         <Link
                           to="/admin"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal hover:bg-cream transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal hover:bg-cream transition-colors font-medium text-forest"
                         >
                           <Settings size={15} />
-                          Admin Panel
+                          {isAdmin ? 'Admin Dashboard' : 'Staff Operations'}
                         </Link>
                       )}
                       <div className="border-t border-beige mt-1 pt-1">

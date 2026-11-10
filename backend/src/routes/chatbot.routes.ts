@@ -109,8 +109,10 @@ chatbotRouter.post('/message', chatbotLimiter, optionalAuth, async (req: AuthReq
       reply = `Here are our products:\n\n${knowledgeBase.products.map(p => `• **${p.name}** — ${p.price} / ${p.size}`).join('\n')}\n\nWhich product would you like to know more about?`;
     } else if (lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('help')) {
       reply = `Hello! I'm the BOTANIQUE support assistant. I can help you with:\n\n• Product information and ingredients\n• Order status (if you're logged in)\n• Shipping and delivery information\n• Returns and refund policy\n• General skincare guidance\n\nWhat can I help you with today?`;
+    } else if (lowerMsg.includes('telegram') || lowerMsg.includes('bot') || lowerMsg.includes('carenow')) {
+      reply = `You can reach our official 24/7 Customer Care Bot directly on Telegram:\n\n👉 **[@Skin_Carenow_Bot](https://t.me/Skin_Carenow_Bot)**\n\nOur bot can assist you with real-time order inquiries, botanical formulation questions, and routine recommendations.`;
     } else if (lowerMsg.includes('human') || lowerMsg.includes('agent') || lowerMsg.includes('speak') || lowerMsg.includes('call')) {
-      reply = `To speak with a member of our team, please use the **Contact Us** page and submit your query. We will respond as soon as possible.\n\n> This is a general support notice and not a confirmed response time commitment.`;
+      reply = `To speak with a member of our team, please use the **Contact Us** page or message our Telegram Customer Care Bot directly:\n\n• **Telegram**: [@Skin_Carenow_Bot](https://t.me/Skin_Carenow_Bot)\n• **Contact Page**: Submit an inquiry and our team will get back to you.\n\n> This is a general support notice and not a confirmed response time commitment.`;
     } else if (lowerMsg.includes('reaction') || lowerMsg.includes('allergic') || lowerMsg.includes('irritation') || lowerMsg.includes('rash')) {
       reply = `⚠️ **Important**: If you have experienced an adverse reaction to a BOTANIQUE product, please:\n\n1. Discontinue use immediately\n2. Consult a healthcare professional\n3. Contact us through the Contact page with your order details\n\nWe take product safety seriously and will escalate your concern to our team.`;
     } else {

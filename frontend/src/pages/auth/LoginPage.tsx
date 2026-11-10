@@ -1,6 +1,15 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Leaf, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react'
+import {
+  Leaf,
+  Lock,
+  Mail,
+  ArrowRight,
+  AlertCircle,
+  Shield,
+  Headphones,
+  User as UserIcon,
+} from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 
 const LoginPage: React.FC = () => {
@@ -13,7 +22,35 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const from = (location.state as any)?.from?.pathname || '/account'
+  const from = (location.state as any)?.from?.pathname
+
+  // Dynamically identify role based on email input for subtle, helpful feedback
+  const detectedRole = React.useMemo(() => {
+    const cleanEmail = email.trim().toLowerCase()
+    if (!cleanEmail) return null
+    if (cleanEmail === 'admin@botanique.in' || cleanEmail.startsWith('admin@')) {
+      return {
+        label: 'Founder & Admin Account',
+        icon: Shield,
+        color: 'text-amber-800 bg-amber-50 border-amber-200',
+      }
+    }
+    if (cleanEmail === 'staff@botanique.in' || cleanEmail.startsWith('staff@') || cleanEmail.includes('care@')) {
+      return {
+        label: 'Operations & Staff Account',
+        icon: Headphones,
+        color: 'text-blue-800 bg-blue-50 border-blue-200',
+      }
+    }
+    if (cleanEmail.includes('@') && cleanEmail.includes('.')) {
+      return {
+        label: 'Customer Account',
+        icon: UserIcon,
+        color: 'text-forest bg-forest/5 border-forest/20',
+      }
+    }
+    return null
+  }, [email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,16 +58,20 @@ const LoginPage: React.FC = () => {
     setIsLoading(true)
 
     try {
-      await login(email, password)
-      const user = useAuthStore.getState().user
-      if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
-        navigate('/admin')
+      // The authentication service identifies the role from the credentials/database
+      const loggedInUser = await login(email, password)
+
+      // Automatic role-based redirection
+      if (loggedInUser.role === 'ADMIN' || loggedInUser.role === 'SUPER_ADMIN') {
+        navigate('/admin', { replace: true })
+      } else if (loggedInUser.role === 'STAFF') {
+        navigate('/admin', { replace: true })
       } else {
-        navigate(from, { replace: true })
+        navigate(from || '/account', { replace: true })
       }
     } catch (err: any) {
       setError(
-        err.response?.data?.message || 'Invalid email or password. Please try again.'
+        err.response?.data?.message || 'Invalid email or password. Please verify your credentials.'
       )
     } finally {
       setIsLoading(false)
@@ -38,30 +79,43 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-cream min-h-[80vh] flex items-center justify-center py-16 px-4">
-      <div className="bg-white p-8 sm:p-10 rounded-3xl border border-beige shadow-sm w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-full bg-forest/10 text-forest flex items-center justify-center mx-auto mb-4">
+    <div className="bg-cream min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6">
+      <div className="bg-white p-8 sm:p-10 rounded-3xl border border-beige shadow-sm w-full max-w-md space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full bg-forest/10 text-forest flex items-center justify-center mx-auto mb-3">
             <Leaf size={22} />
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-medium text-charcoal mb-2">
-            Welcome to Botanique
+          <h1 className="font-serif text-2xl sm:text-3xl font-medium text-charcoal mb-1.5">
+            Welcome Back
           </h1>
           <p className="text-xs text-charcoal/60">
-            Sign in to access your orders, saved addresses, and ritual wishlist.
+            Sign in with your email to continue your skincare ritual.
           </p>
         </div>
 
+        {/* Error Notification */}
         {error && (
-          <div className="mb-6 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
             <AlertCircle size={15} className="shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label">Email Address</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-charcoal">Email Address</label>
+              {detectedRole && (
+                <span
+                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${detectedRole.color}`}
+                >
+                  <detectedRole.icon size={11} />
+                  <span>{detectedRole.label}</span>
+                </span>
+              )}
+            </div>
             <div className="relative">
               <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sage" />
               <input
@@ -71,12 +125,15 @@ const LoginPage: React.FC = () => {
                 required
                 placeholder="name@example.com"
                 className="input pl-10 text-xs"
+                autoComplete="email"
               />
             </div>
           </div>
 
           <div>
-            <label className="label">Password</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-charcoal">Password</label>
+            </div>
             <div className="relative">
               <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sage" />
               <input
@@ -86,6 +143,7 @@ const LoginPage: React.FC = () => {
                 required
                 placeholder="••••••••"
                 className="input pl-10 text-xs"
+                autoComplete="current-password"
               />
             </div>
           </div>
@@ -94,7 +152,7 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full justify-center text-xs py-3.5"
+              className="btn-primary w-full justify-center text-xs py-3.5 shadow-sm"
             >
               <span>{isLoading ? 'Signing In…' : 'Sign In'}</span>
               <ArrowRight size={14} />
@@ -102,18 +160,14 @@ const LoginPage: React.FC = () => {
           </div>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-beige text-center space-y-3">
+        {/* Footer info */}
+        <div className="pt-4 border-t border-beige text-center space-y-2">
           <p className="text-xs text-charcoal/70">
-            Do not have an account yet?{' '}
+            Need a new account?{' '}
             <Link to="/register" className="font-medium text-forest hover:underline">
-              Create an Account
+              Create an account
             </Link>
           </p>
-          <div className="text-[11px] text-charcoal/50">
-            Default Admin credentials for development:{' '}
-            <span className="font-mono text-charcoal/70">admin@botanique.in</span> /{' '}
-            <span className="font-mono text-charcoal/70">Admin@Botanique2024</span>
-          </div>
         </div>
       </div>
     </div>
@@ -121,4 +175,3 @@ const LoginPage: React.FC = () => {
 }
 
 export default LoginPage
-

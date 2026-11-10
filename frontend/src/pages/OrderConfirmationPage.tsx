@@ -8,6 +8,8 @@ import {
   ArrowRight,
   ShieldCheck,
   Leaf,
+  Send,
+  ExternalLink,
 } from 'lucide-react'
 import api from '../lib/api'
 
@@ -80,7 +82,7 @@ const OrderConfirmationPage: React.FC = () => {
         )}
 
         {/* Next Steps Info */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left text-xs mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left text-xs mb-6">
           <div className="p-4 rounded-xl border border-beige bg-cream/30 space-y-1">
             <div className="flex items-center gap-2 font-medium text-charcoal">
               <Truck size={14} className="text-forest" />
@@ -101,6 +103,38 @@ const OrderConfirmationPage: React.FC = () => {
               to your facial ritual.
             </p>
           </div>
+        </div>
+
+        {/* Telegram Customer Care Bot Card */}
+        <div className="p-4 sm:p-5 rounded-2xl border border-sky-200 bg-sky-50/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-left mb-8">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-full bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
+              <Send size={16} className="-rotate-45 ml-0.5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-sm font-semibold text-charcoal">
+                  Telegram Customer Care Bot
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-sky-100 text-sky-800">
+                  24/7 Support
+                </span>
+              </div>
+              <p className="text-xs text-charcoal/70 font-light mt-0.5">
+                Have questions about your order or formulation ritual? Chat directly with{' '}
+                <strong className="text-charcoal font-medium">@Skin_Carenow_Bot</strong>.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://t.me/Skin_Carenow_Bot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-sky-600 hover:bg-sky-700 text-white transition-all shadow-xs shrink-0"
+          >
+            <span>Open Telegram</span>
+            <ExternalLink size={12} />
+          </a>
         </div>
 
         {/* Action Buttons */}

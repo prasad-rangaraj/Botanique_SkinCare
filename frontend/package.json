@@ -18,6 +18,7 @@
     "vite": "^8.3.6"
   },
   "dependencies": {
+    "@auteryn/chat-widget": "^2.2.0",
     "@tanstack/react-query": "^5.107.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

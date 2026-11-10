@@ -169,14 +169,12 @@ const AdminProductsPage: React.FC = () => {
   return (
     <div className="bg-cream min-h-screen py-8 md:py-12">
       <div className="page-container max-w-7xl space-y-6">
-        {/* Navigation */}
-        <Link
-          to="/admin"
-          className="inline-flex items-center gap-1.5 text-xs text-charcoal/60 hover:text-forest transition-colors"
-        >
-          <ArrowLeft size={14} />
-          <span>Back to Admin Dashboard</span>
-        </Link>
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-1.5 text-xs text-charcoal/50">
+          <Link to="/admin" className="hover:text-forest transition-colors">Overview</Link>
+          <span>/</span>
+          <span className="text-charcoal font-medium">Products</span>
+        </div>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

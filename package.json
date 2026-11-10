@@ -1,0 +1,28 @@
+{
+  "name": "botanique-skincare",
+  "version": "1.0.0",
+  "description": "BOTANIQUE — Artisanal Botanical Skincare E-Commerce Platform",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "db:migrate": "npm --prefix backend run db:migrate",
+    "db:seed": "npm --prefix backend run db:seed",
+    "db:generate": "npm --prefix backend run db:generate"
+  },
+  "keywords": [
+    "botanique",
+    "skincare",
+    "ecommerce",
+    "react",
+    "express",
+    "prisma",
+    "bengaluru"
+  ],
+  "author": "BOTANIQUE",
+  "license": "UNLICENSED"
+}
+

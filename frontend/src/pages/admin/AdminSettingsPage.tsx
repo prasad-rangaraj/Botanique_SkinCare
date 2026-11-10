@@ -14,8 +14,10 @@ import {
   FileText,
 } from 'lucide-react'
 import api from '../../lib/api'
+import { useAuthStore } from '../../store/authStore'
 
 const AdminSettingsPage: React.FC = () => {
+  const { isAdmin } = useAuthStore()
   const queryClient = useQueryClient()
   const [successMsg, setSuccessMsg] = useState('')
 
@@ -127,13 +129,12 @@ const AdminSettingsPage: React.FC = () => {
   return (
     <div className="bg-cream min-h-screen py-8 md:py-12">
       <div className="page-container max-w-7xl space-y-8">
-        <Link
-          to="/admin"
-          className="inline-flex items-center gap-1.5 text-xs text-charcoal/60 hover:text-forest transition-colors"
-        >
-          <ArrowLeft size={14} />
-          <span>Back to Admin Dashboard</span>
-        </Link>
+        {/* Breadcrumb Navigation */}
+        <div className="flex items-center gap-1.5 text-xs text-charcoal/50">
+          <Link to="/admin" className="hover:text-forest transition-colors">Overview</Link>
+          <span>/</span>
+          <span className="text-charcoal font-medium">Settings & Zones</span>
+        </div>
 
         <div>
           <h1 className="font-serif text-3xl font-medium text-charcoal">
@@ -143,6 +144,18 @@ const AdminSettingsPage: React.FC = () => {
             Configure site-wide banners, contact channels, delivery zones, and audit security logs.
           </p>
         </div>
+
+        {!isAdmin && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-3">
+            <Shield size={18} className="text-amber-600 shrink-0" />
+            <div>
+              <p className="font-semibold">Read-Only View for Staff</p>
+              <p className="text-amber-700 mt-0.5">
+                You are logged in as Customer Care & Operations Staff. Site settings, return policies, and shipping zones can only be modified by the Founder & Owner (Admin).
+              </p>
+            </div>
+          </div>
+        )}
 
         {successMsg && (
           <div className="p-3.5 rounded-2xl bg-forest/10 border border-forest/20 text-forest text-xs flex items-center gap-2">
@@ -241,12 +254,19 @@ const AdminSettingsPage: React.FC = () => {
 
               <button
                 onClick={() => saveSettingsMutation.mutate()}
-                disabled={saveSettingsMutation.isPending}
-                className="btn-primary text-xs py-2.5 px-6 inline-flex items-center gap-1.5 mt-2"
+                disabled={saveSettingsMutation.isPending || !isAdmin}
+                title={!isAdmin ? 'Restricted to Founder & Admin' : undefined}
+                className={`btn-primary text-xs py-2.5 px-6 inline-flex items-center gap-1.5 mt-2 ${
+                  !isAdmin ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
                 <Save size={14} />
                 <span>
-                  {saveSettingsMutation.isPending ? 'Saving…' : 'Save General Settings'}
+                  {saveSettingsMutation.isPending
+                    ? 'Saving…'
+                    : !isAdmin
+                    ? 'Admin Access Required to Save'
+                    : 'Save General Settings'}
                 </span>
               </button>
             </div>
@@ -259,13 +279,15 @@ const AdminSettingsPage: React.FC = () => {
                 <Truck size={18} className="text-forest" />
                 <span>Shipping Zones & Delivery Fees</span>
               </h2>
-              <button
-                onClick={() => setShowAddZone(!showAddZone)}
-                className="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1"
-              >
-                <Plus size={13} />
-                <span>Add Zone</span>
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => setShowAddZone(!showAddZone)}
+                  className="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1"
+                >
+                  <Plus size={13} />
+                  <span>Add Zone</span>
+                </button>
+              )}
             </div>
 
             {/* Add Zone Form */}
@@ -358,13 +380,15 @@ const AdminSettingsPage: React.FC = () => {
                       {z.pincodes?.length ? `${z.pincodes.length} dedicated PIN codes` : 'All general PIN codes'}
                     </p>
                   </div>
-                  <button
-                    onClick={() => deleteZoneMutation.mutate(z.id)}
-                    className="text-charcoal/40 hover:text-red-700 p-1"
-                    title="Delete Zone"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  {isAdmin && (
+                    <button
+                      onClick={() => deleteZoneMutation.mutate(z.id)}
+                      className="text-charcoal/40 hover:text-red-700 p-1"
+                      title="Delete Zone"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

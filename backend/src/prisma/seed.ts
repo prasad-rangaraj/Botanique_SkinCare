@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌿 Seeding BOTANIQUE database...\n');
@@ -208,22 +206,75 @@ For external use on lips only. Perform a patch test before first use. Discontinu
     }
   }
 
-  // Create admin user
+  // ─── 1. Admin / Founder User (Full control: stats, settings, catalog) ───
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@botanique.in';
   const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@Botanique2024';
-  const existing = await prisma.user.findUnique({ where: { email: adminEmail } });
-  if (!existing) {
+  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
+  if (!existingAdmin) {
     const hashed = await bcrypt.hash(adminPassword, 12);
     await prisma.user.create({
       data: {
         email: adminEmail,
         password: hashed,
-        firstName: 'Admin',
-        lastName: 'BOTANIQUE',
+        firstName: 'Botanique',
+        lastName: 'Founder',
         role: 'ADMIN',
       },
     });
-    console.log(`  ✅ Created admin user: ${adminEmail}`);
+    console.log(`  ✅ Created admin/owner user: ${adminEmail}`);
+  }
+
+  // ─── 2. Staff / Member User (Customer care & fulfillment) ───
+  const staffEmail = 'staff@botanique.in';
+  const staffPassword = 'Staff@Botanique2024';
+  const existingStaff = await prisma.user.findUnique({ where: { email: staffEmail } });
+  if (!existingStaff) {
+    const hashedStaff = await bcrypt.hash(staffPassword, 12);
+    await prisma.user.create({
+      data: {
+        email: staffEmail,
+        password: hashedStaff,
+        firstName: 'Meera',
+        lastName: 'Nair',
+        role: 'STAFF',
+      },
+    });
+    console.log(`  ✅ Created staff/member user: ${staffEmail}`);
+  }
+
+  // ─── 3. Customer User (Shopper) ───
+  const customerEmail = 'customer@botanique.in';
+  const customerPassword = 'Customer@Botanique2024';
+  const existingCustomer = await prisma.user.findUnique({ where: { email: customerEmail } });
+  if (!existingCustomer) {
+    const hashedCust = await bcrypt.hash(customerPassword, 12);
+    const newCustomer = await prisma.user.create({
+      data: {
+        email: customerEmail,
+        password: hashedCust,
+        firstName: 'Priya',
+        lastName: 'Sharma',
+        role: 'CUSTOMER',
+        phone: '9876543210',
+      },
+    });
+
+    // Add a default address for the demo customer
+    await prisma.address.create({
+      data: {
+        userId: newCustomer.id,
+        fullName: 'Priya Sharma',
+        phone: '9876543210',
+        line1: '#42, 4th Main, Indiranagar',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        pincode: '560038',
+        country: 'India',
+        isDefault: true,
+      },
+    });
+
+    console.log(`  ✅ Created customer user: ${customerEmail}`);
   }
 
   // Default site settings

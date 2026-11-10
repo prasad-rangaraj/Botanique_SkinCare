@@ -1,7 +1,7 @@
 import { Router, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/errorHandler';
-import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
+import { authenticate, requireAdmin, requireStaffOrAdmin, AuthRequest } from '../middleware/auth';
 import { v4 as uuidv4 } from 'uuid';
 
 export const orderRouter = Router();
@@ -216,7 +216,7 @@ orderRouter.post('/:id/replacement', authenticate, async (req: AuthRequest, res:
 });
 
 // Admin: Get all orders
-orderRouter.get('/admin/all', authenticate, requireAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
+orderRouter.get('/admin/all', authenticate, requireStaffOrAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { status, page = '1', limit = '20' } = req.query;
     const pageNum = parseInt(page as string);
@@ -249,7 +249,7 @@ orderRouter.get('/admin/all', authenticate, requireAdmin, async (req: AuthReques
 });
 
 // Admin: Update order status
-orderRouter.patch('/admin/:id/status', authenticate, requireAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
+orderRouter.patch('/admin/:id/status', authenticate, requireStaffOrAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const orderId = req.params.id as string;
     const { status } = req.body;
@@ -272,7 +272,7 @@ orderRouter.patch('/admin/:id/status', authenticate, requireAdmin, async (req: A
 });
 
 // Admin: Add shipment info
-orderRouter.put('/admin/:id/shipment', authenticate, requireAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
+orderRouter.put('/admin/:id/shipment', authenticate, requireStaffOrAdmin, async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const orderId = req.params.id as string;
     const { courierName, trackingNumber, trackingUrl, estimatedDelivery } = req.body;

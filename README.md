@@ -113,15 +113,17 @@ The frontend will be available at `http://localhost:5173`
 
 ---
 
-## Default Admin Access
+## 3-Role Authentication & Access Control
 
-After seeding, the admin dashboard is available at `/admin`.
+The application implements a role-based access control system featuring three distinct accounts. A dedicated 1-click role selector on `/login` automatically fills in the credentials for each role:
 
-Default credentials (change immediately):
-- Email: `admin@botanique.in`
-- Password: `Admin@Botanique2024`
+| Role | Demo Email | Password | Landing Page | Key Permissions |
+|---|---|---|---|---|
+| **Customer** (Shopper) | `customer@botanique.in` | `Customer@Botanique2024` | `/account` | Browse catalog, cart & checkout, order history, saved delivery addresses, return/exchange claims. |
+| **Staff** (Operations & Care) | `staff@botanique.in` | `Staff@Botanique2024` | `/admin` | View store orders, assign carrier tracking details, triage return claims, inspect customer profiles. Restricted from modifying core site settings, revenue figures, and financial policies. |
+| **Founder / Admin** (Owner) | `admin@botanique.in` | `Admin@Botanique2024` | `/admin` | Full operational authority: catalog prices, site settings & announcement banner, shipping zones & rates, financial metrics, and audit security trails. |
 
-> ⚠️ Change the admin password before deploying to production.
+> ⚠️ Always change default administrative passwords before deploying to production environments.
 
 ---
 
@@ -163,6 +165,32 @@ The chatbot uses a knowledge-base fallback when no AI API is configured. To conn
 2. Set `AI_SUPPORT_API_KEY` in `backend/.env`
 
 The chatbot will forward messages to the configured API. If unavailable, it falls back to the built-in knowledge base.
+
+---
+
+## AI Customer Support Agent (Auteryn Integration)
+
+The storefront is equipped with the **Auteryn AI Customer Support Agent** via `@auteryn/chat-widget@2.2.0`:
+
+- **Site ID**: `site_pub_Hg4Wp21ZVUvplnoYW8FC7cyn`
+- **Widget Secret**: `wid_sec_tC9hmgfARUA55HDURv4i38d9wrh1U4hQ` (stored in `.env`)
+- **Brand Theming**: Configured to match Botanique's Forest Green (`#254B3B`) with soft rounded corners.
+- **Dynamic Context**: Automatically transmits visitor context (name, role, cart count) to the AI support agent for personalized guidance.
+
+```tsx
+import { AuterynChat } from '@auteryn/chat-widget/react';
+
+<AuterynChat
+  site={import.meta.env.VITE_AUTERYN_SITE_ID || 'site_pub_Hg4Wp21ZVUvplnoYW8FC7cyn'}
+  theme={{ brand: '#254B3B', corners: 'soft' }}
+  context={{
+    store: 'BOTANIQUE',
+    customerName: user ? `${user.firstName} ${user.lastName}` : 'Visitor',
+    customerRole: user?.role || 'GUEST',
+    cartItemsCount: items?.length || 0,
+  }}
+/>
+```
 
 ---
 
